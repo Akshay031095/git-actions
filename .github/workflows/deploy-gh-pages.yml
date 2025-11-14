@@ -3,6 +3,8 @@ name: Deploy Angular to GitHub Pages
 on:
   push:
     branches: [master]
+  pull_request:
+    branches: [master]
 
 jobs:
   build-and-deploy:
