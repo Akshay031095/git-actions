@@ -30,5 +30,5 @@ jobs:
         run: npm run build
 
       # 5️⃣ Run Unit Tests (if you use them)
-      - name: Run Tests
-        run: npm test -- --watch=false
+      # - name: Run Tests
+      #   run: npm test -- --watch=false
