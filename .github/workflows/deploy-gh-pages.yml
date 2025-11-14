@@ -23,11 +23,13 @@ jobs:
 
       # 4️⃣ Build Angular app
       - name: Build Angular
-        run: npm run build -- --configuration production --base-href="/${{ github.event.repository.name }}/"
+        # run: npm run build -- --configuration production --base-href="/${{ github.event.repository.name }}/"
+        run: npm run build -- --configuration production --base-href="/git-actions/"
 
       # 5️⃣ Deploy to GitHub Pages
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages # target branch for GitHub Pages
-          folder: dist/${{ github.event.repository.name }} # Adjust if your folder name differs
+          #   folder: dist/${{ github.event.repository.name }} # Adjust if your folder name differs
+          folder: dist/git-actions # Adjust if your folder name differs
