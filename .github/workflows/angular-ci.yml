@@ -15,11 +15,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Use Node 18 (recommended for Angular 18)
+      # 2️⃣ Use Node 20 (recommended for Angular 18)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       # 3️⃣ Install dependencies (faster & reliable)
       - name: Install dependencies
