@@ -32,6 +32,6 @@ jobs:
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: master # target branch for GitHub Pages
+          branch: gh-pages # target branch for GitHub Pages
           #   folder: dist/${{ github.event.repository.name }} # Adjust if your folder name differs
-          folder: dist/git-actions # Adjust if your folder name differs
+          folder: dist/git-actions/browser # Adjust if your folder name differs
