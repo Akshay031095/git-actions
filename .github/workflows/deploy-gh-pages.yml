@@ -56,10 +56,12 @@ jobs:
       - name: Build Angular App
         # env:
         #   API_BASE_URL: "https://api.example.com"   # Step-level env variable
-        run:
-          # echo "Repository Name: ${{ github.event.repository.name }}"
-          # npm run build -- --configuration ${{env.NODE_ENV}} --output-hashing=all --base-href="/${{ github.event.repository.name }}/"
-          npm run build -- --configuration production --output-hashing=all --base-href="/git-actions/"
+        run: npm run build -- --configuration production --base-href="/${{ github.event.repository.name }}/"
+
+        # run:
+        # echo "Repository Name: ${{ github.event.repository.name }}"
+        # npm run build -- --configuration ${{env.NODE_ENV}} --output-hashing=all --base-href="/${{ github.event.repository.name }}/"
+        # npm run build -- --configuration production --output-hashing=all --base-href="/git-actions/"
 
       # 5) Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
