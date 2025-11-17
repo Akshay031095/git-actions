@@ -5,6 +5,8 @@ on:
     branches: [master]
   workflow_dispatch:
 
+env: IMAGE_NAME:${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
+
 jobs:
   build-and-push:
     name: Build Angular, Build Docker image & Push to DockerHub
@@ -33,13 +35,13 @@ jobs:
       - name: Build Docker image
         run: |
           # set IMAGE variable (you can override via repo secrets if you want)
-          IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
+          IMAGE=${{ secrets.DOCKER_USERNAME }}/$akshay031095/git-actions:latest
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
           docker build -t $IMAGE .
 
       - name: Push Docker image
         run: |
-          docker push $IMAGE
+          docker push ${{ env.IMAGE_NAME }}
 
       - name: Success message
         if: success()
