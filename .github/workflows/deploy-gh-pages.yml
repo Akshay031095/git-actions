@@ -113,7 +113,7 @@ jobs:
 
       # 4️⃣ Build Angular app
       - name: Build Angular
-        run: npm run build -- --configuration production --base-href="/${{ github.event.repository.name }}/" --otuput-hashing=all
+        run: npm run build -- --configuration production --base-href="/${{ github.event.repository.name }}/" --output-hashing=all
 
       # 5️⃣ Deploy to GitHub Pages
       - name: Deploy to gh-pages
