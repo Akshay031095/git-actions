@@ -1,0 +1,49 @@
+name: Angular Docker CI/CD
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/{{ github.repository }}:latest
+
+jobs:
+  build-and-push:
+    name: Build Angular, Build Docker image & Push to DockerHub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular (production)
+        run: npm run build -- --configuration production
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          # set IMAGE variable (you can override via repo secrets if you want)
+          IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:latest
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          docker build -t $IMAGE .
+
+      - name: Push Docker image
+        run: |
+          docker push $IMAGE
+
+      - name: Success message
+        if: success()
+        run: echo "▶ Docker image built & pushed $IMAGE"

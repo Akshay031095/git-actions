@@ -1,0 +1,105 @@
+name: Full CI-CD Example with All Variables
+
+# ------------------------
+# WHEN THE WORKFLOW RUNS
+# ------------------------
+on:
+  push:
+    branches: [master, develop] # Run on push to these branches
+  pull_request:
+    branches: [master] # Run on pull request to master
+  workflow_dispatch: # Allow manual trigger
+
+# ------------------------
+# GLOBAL ENV VARIABLES
+# ------------------------
+env:
+  GLOBAL_ENV_VAR: 'This is global'
+  NODE_ENV: production
+
+# ------------------------
+# PERMISSIONS (Important)
+# ------------------------
+permissions:
+  contents: write # Needed for deployment to gh-pages
+
+jobs:
+  # ------------------------
+  # JOB 1: Testing
+  # ------------------------
+  test: #build | build-and-deploy | test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16, 18, 20] # Example of matrix builds
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }} # Using matrix variable
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Tests
+        run: npm test
+
+  # ------------------------
+  # JOB 2: Build + Deploy
+  # ------------------------
+  build-and-deploy: #build | build-and-deploy | test
+    runs-on: ubuntu-latest
+    needs: test # Run this only after tests job succeeds
+    timeout-minutes: 15 # Limit execution time
+    continue-on-error: true # Continue workflow on errors
+    strategy:
+      matrix:
+        node-version: [16, 18, 20] # Example of matrix builds
+
+    steps:
+      # 1) Checkout code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2) Setup Node
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # 3) Install with CI (repeatable installation)
+      - name: Install Dependencies
+        run: npm ci
+
+      # 4) Build Angular
+      - name: Build Angular App
+        # env:
+        #   API_BASE_URL: "https://api.example.com"   # Step-level env variable
+        run: |
+          echo "Repository Name: ${{ github.event.repository.name }}"
+          echo "Branch Name: ${{ github.ref }}"
+          echo "Commit SHA: ${{ github.sha }}"
+          npm run build -- --configuration ${{env.NODE_ENV}} --output-hashing=all --base-href="/${{ github.event.repository.name }}/"
+
+      # 5) Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages # Target branch
+          folder: dist/${{ github.event.repository.name }}/browser
+          clean: true # Replace old files
+
+      # 6) Print message if successful
+      - name: Deployment successful
+        if: success()
+        run: echo "🎉 Deployment Successful!"
+
+      # 7) Print message if failed
+      - name: Deployment failed
+        if: failure()
+        run: echo "❌ Deployment Failed! Check logs."
