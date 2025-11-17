@@ -5,7 +5,7 @@ name: Full CI-CD Example with All Variables
 # ------------------------
 on:
   push:
-    branches: [master, develop] # Run on push to these branches
+    branches: [master] # Run on push to these branches
   pull_request:
     branches: [master] # Run on pull request to master
   workflow_dispatch: # Allow manual trigger
@@ -24,31 +24,6 @@ permissions:
   contents: write # Needed for deployment to gh-pages
 
 jobs:
-  # ------------------------
-  # JOB 1: Testing
-  # ------------------------
-  test: #build | build-and-deploy | test
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20] # Example of matrix builds
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }} # Using matrix variable
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Run Tests
-        run: npm test
-
   # ------------------------
   # JOB 2: Build + Deploy
   # ------------------------
@@ -83,7 +58,6 @@ jobs:
         run: |
           echo "Repository Name: ${{ github.event.repository.name }}"
           echo "Branch Name: ${{ github.ref }}"
-          echo "Commit SHA: ${{ github.sha }}"
           npm run build -- --configuration ${{env.NODE_ENV}} --output-hashing=all --base-href="/${{ github.event.repository.name }}/"
 
       # 5) Deploy to GitHub Pages
