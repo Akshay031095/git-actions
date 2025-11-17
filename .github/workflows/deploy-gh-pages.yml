@@ -32,7 +32,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16, 18, 20] # Example of matrix builds
+        node-version: [20] # Example of matrix builds
 
     steps:
       - name: Checkout Code
@@ -59,7 +59,7 @@ jobs:
     continue-on-error: true # Continue workflow on errors
     strategy:
       matrix:
-        node-version: [16, 18, 20] # Example of matrix builds
+        node-version: [20] # Example of matrix builds
 
     steps:
       # 1) Checkout code
