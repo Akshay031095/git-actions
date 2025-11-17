@@ -8,7 +8,7 @@ on:
     branches: [master] # Run on push to these branches
   pull_request:
     branches: [master] # Run on pull request to master
-  workflow_dispatch: # Allow manual trigger
+  # workflow_dispatch: # Allow manual trigger
 
 # ------------------------
 # GLOBAL ENV VARIABLES
@@ -45,7 +45,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          # node-version: ${{ matrix.node-version }}
+          node-version: 20
 
       # 3) Install with CI (repeatable installation)
       - name: Install Dependencies
@@ -55,16 +56,18 @@ jobs:
       - name: Build Angular App
         # env:
         #   API_BASE_URL: "https://api.example.com"   # Step-level env variable
-        run: |
-          echo "Repository Name: ${{ github.event.repository.name }}"
-          npm run build -- --configuration ${{env.NODE_ENV}} --output-hashing=all --base-href="/${{ github.event.repository.name }}/"
+        run:
+          # echo "Repository Name: ${{ github.event.repository.name }}"
+          # npm run build -- --configuration ${{env.NODE_ENV}} --output-hashing=all --base-href="/${{ github.event.repository.name }}/"
+          npm run build -- --configuration production --output-hashing=all --base-href="/git-actions/"
 
       # 5) Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages # Target branch
-          folder: dist/${{ github.event.repository.name }}/browser
+          # folder: dist/${{ github.event.repository.name }}/browser
+          folder: dist/git-actions/browser
           clean: true # Replace old files
 
       # 6) Print message if successful
