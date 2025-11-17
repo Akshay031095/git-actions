@@ -1,87 +1,133 @@
-name: Full CI-CD Example with All Variables
+# name: Full CI-CD Example with All Variables
 
-# ------------------------
-# WHEN THE WORKFLOW RUNS
-# ------------------------
+# # ------------------------
+# # WHEN THE WORKFLOW RUNS
+# # ------------------------
+# on:
+#   push:
+#     branches: [master] # Run on push to these branches
+#   pull_request:
+#     branches: [master] # Run on pull request to master
+#   # workflow_dispatch: # Allow manual trigger
+
+# # ------------------------
+# # GLOBAL ENV VARIABLES
+# # ------------------------
+# env:
+#   GLOBAL_ENV_VAR: 'This is global'
+#   NODE_ENV: production
+
+# # ------------------------
+# # PERMISSIONS (Important)
+# # ------------------------
+# permissions:
+#   contents: write # Needed for deployment to gh-pages
+
+# jobs:
+#   # ------------------------
+#   # JOB 2: Build + Deploy
+#   # ------------------------
+#   build-and-deploy: #build | build-and-deploy | test
+#     runs-on: ubuntu-latest
+#     # needs: test # Run this only after tests job succeeds
+#     timeout-minutes: 15 # Limit execution time
+#     continue-on-error: true # Continue workflow on errors
+#     strategy:
+#       matrix:
+#         node-version: [20] # Example of matrix builds
+
+#     steps:
+#       # 1) Checkout code
+#       - name: Checkout Repository
+#         uses: actions/checkout@v4
+
+#       # 2) Setup Node
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           # node-version: ${{ matrix.node-version }}
+#           node-version: 20
+
+#       # 3) Install with CI (repeatable installation)
+#       - name: Install Dependencies
+#         run: npm ci
+
+#       # 4️⃣ Install Angular CLI (required for ng command)
+#       - name: Install Angular CLI
+#         run: npm install -g @angular/cli@latest
+
+#       # 4) Build Angular
+#       - name: Build Angular App
+#         # env:
+#         #   API_BASE_URL: "https://api.example.com"   # Step-level env variable
+#         run: npm run build -- --configuration production --base-href="/${{ github.event.repository.name }}/"
+
+#         # run:
+#         # echo "Repository Name: ${{ github.event.repository.name }}"
+#         # npm run build -- --configuration ${{env.NODE_ENV}} --output-hashing=all --base-href="/${{ github.event.repository.name }}/"
+#         # npm run build -- --configuration production --output-hashing=all --base-href="/git-actions/"
+
+#       # 5) Deploy to GitHub Pages
+#       - name: Deploy to GitHub Pages
+#         uses: JamesIves/github-pages-deploy-action@v4
+#         with:
+#           branch: gh-pages # Target branch
+#           # folder: dist/${{ github.event.repository.name }}/browser
+#           folder: dist/git-actions/browser
+#           clean: true # Replace old files
+
+#       # 6) Print message if successful
+#       - name: Deployment successful
+#         if: success()
+#         run: echo "🎉 Deployment Successful!"
+
+#       # 7) Print message if failed
+#       - name: Deployment failed
+#         if: failure()
+#         run: echo "❌ Deployment Failed! Check logs."
+
+name: Deploy Angular to GitHub Pages
+
 on:
   push:
-    branches: [master] # Run on push to these branches
+    branches: [master]
   pull_request:
-    branches: [master] # Run on pull request to master
-  # workflow_dispatch: # Allow manual trigger
-
-# ------------------------
-# GLOBAL ENV VARIABLES
-# ------------------------
-env:
-  GLOBAL_ENV_VAR: 'This is global'
-  NODE_ENV: production
-
-# ------------------------
-# PERMISSIONS (Important)
-# ------------------------
-permissions:
-  contents: write # Needed for deployment to gh-pages
+    branches: [master]
 
 jobs:
-  # ------------------------
-  # JOB 2: Build + Deploy
-  # ------------------------
-  build-and-deploy: #build | build-and-deploy | test
+  build-and-deploy:
     runs-on: ubuntu-latest
-    # needs: test # Run this only after tests job succeeds
-    timeout-minutes: 15 # Limit execution time
-    continue-on-error: true # Continue workflow on errors
-    strategy:
-      matrix:
-        node-version: [20] # Example of matrix builds
 
     steps:
-      # 1) Checkout code
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      # 1️⃣ Checkout code
+      - uses: actions/checkout@v4
 
-      # 2) Setup Node
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # 2️⃣ Setup Node
+      - uses: actions/setup-node@v4
         with:
-          # node-version: ${{ matrix.node-version }}
           node-version: 20
 
-      # 3) Install with CI (repeatable installation)
-      - name: Install Dependencies
+      # 3️⃣ Install dependencies
+      - name: Install dependencies
         run: npm ci
 
-      # 4️⃣ Install Angular CLI (required for ng command)
-      - name: Install Angular CLI
-        run: npm install -g @angular/cli@latest
-
-      # 4) Build Angular
-      - name: Build Angular App
-        # env:
-        #   API_BASE_URL: "https://api.example.com"   # Step-level env variable
+      # 4️⃣ Build Angular app
+      - name: Build Angular
         run: npm run build -- --configuration production --base-href="/${{ github.event.repository.name }}/"
 
-        # run:
-        # echo "Repository Name: ${{ github.event.repository.name }}"
-        # npm run build -- --configuration ${{env.NODE_ENV}} --output-hashing=all --base-href="/${{ github.event.repository.name }}/"
-        # npm run build -- --configuration production --output-hashing=all --base-href="/git-actions/"
-
-      # 5) Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
+      # 5️⃣ Deploy to GitHub Pages
+      - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages # Target branch
-          # folder: dist/${{ github.event.repository.name }}/browser
-          folder: dist/git-actions/browser
-          clean: true # Replace old files
+          branch: gh-pages
+          folder: dist/${{ github.event.repository.name }}/browser
 
-      # 6) Print message if successful
+      # ⭐ 6️⃣ Run when job succeeds
       - name: Deployment successful
         if: success()
-        run: echo "🎉 Deployment Successful!"
+        run: echo "🎉 Deployment successful!"
 
-      # 7) Print message if failed
-      - name: Deployment failed
+      # ❌ 7️⃣ Run when job fails
+      - name: Notify on failure
         if: failure()
-        run: echo "❌ Deployment Failed! Check logs."
+        run: echo "❌ Deployment failed! Please check the logs."
