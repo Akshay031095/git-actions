@@ -52,6 +52,10 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      # 4️⃣ Install Angular CLI (required for ng command)
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
       # 4) Build Angular
       - name: Build Angular App
         # env:
