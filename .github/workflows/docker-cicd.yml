@@ -33,9 +33,11 @@ jobs:
       - name: Build Docker image
         run: |
           # set IMAGE variable (you can override via repo secrets if you want)
-          IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
-          echo "IMAGE=$IMAGE" >> $GITHUB_ENV    
-          docker build -t $IMAGE .
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          echo "TAG=$TIMESTAMP" >> $GITHUB_ENV
+          docker build -t $IMAGE:latest -t $IMAGE:$TIMESTAMP .
 
       - name: Push Docker image
         run: |
