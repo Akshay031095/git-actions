@@ -11,7 +11,7 @@ RUN npm ci
 COPY . .
 
 # Build the Angular app (production build)
-RUN npm run build -- --configuration production --base-href="/git-actions/"
+RUN npm run build -- --configuration production --output-hashing=all --base-href="/git-actions/"
 
 
 # ------------ Stage 2: Run with Nginx ------------
