@@ -57,7 +57,6 @@ jobs:
         #   API_BASE_URL: "https://api.example.com"   # Step-level env variable
         run: |
           echo "Repository Name: ${{ github.event.repository.name }}"
-          echo "Branch Name: ${{ github.ref }}"
           npm run build -- --configuration ${{env.NODE_ENV}} --output-hashing=all --base-href="/${{ github.event.repository.name }}/"
 
       # 5) Deploy to GitHub Pages
