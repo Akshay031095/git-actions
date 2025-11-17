@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/sha256:42c8e8071a83c36f2619d361be01a138495c651c2095a7c72e265d5669eac1c2:latest
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/git-actions:latest
 
 jobs:
   build-and-push:
@@ -36,7 +36,7 @@ jobs:
       - name: Build Docker image
         run: |
           # set IMAGE variable (you can override via repo secrets if you want)
-          IMAGE=${{ secrets.DOCKER_USERNAME }}/sha256:42c8e8071a83c36f2619d361be01a138495c651c2095a7c72e265d5669eac1c2:latest
+          IMAGE=${{ secrets.DOCKER_USERNAME }}/$git-actions:latest
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
           docker build -t $IMAGE .
 
