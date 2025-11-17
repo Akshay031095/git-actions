@@ -22,7 +22,7 @@ jobs:
         run: npm ci
 
       - name: Build Angular (production)
-        run: npm run build -- --configuration production --output-hashing=all --base-href="/git-actions/
+        run: npm run build -- --configuration production --output-hashing=all --base-href="/git-actions/"
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
